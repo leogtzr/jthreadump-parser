@@ -1,4 +1,4 @@
-# thread-dump-parser
+# jthreaddump-parser
 
 This is a small Java library to parse some information from a Java Thread Dump.
 
