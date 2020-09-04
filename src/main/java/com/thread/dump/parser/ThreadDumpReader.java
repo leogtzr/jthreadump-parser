@@ -89,7 +89,6 @@ public final class ThreadDumpReader {
 	}
 
 	private static List<ThreadInfo> read(final Reader reader) throws IOException {
-
 		final List<String> lines = new ArrayList<>();
 		try (final BufferedReader br = new BufferedReader(reader)) {
 			for (String line = br.readLine(); line != null; line = br.readLine()) {
@@ -98,12 +97,6 @@ public final class ThreadDumpReader {
 		}
 
 		return parse(lines);
-	}
-
-	private static List<ThreadInfo> read(final String threadDumpFilePath) throws IOException {
-		final List<String> tlines = Files.lines(Paths.get(threadDumpFilePath), Charset.defaultCharset())
-				.collect(Collectors.toList());
-		return parse(tlines);
 	}
 
 	public static List<ThreadInfo> fromFile(final String threadDumpFilePath) throws IOException {
