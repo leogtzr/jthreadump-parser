@@ -152,13 +152,12 @@ public class ThreadParsing {
 		}
 
 		final String stackTrace = thread.getStackTrace().get();
-		final List<Locked> holds = Arrays.stream(stackTrace.split("\n"))
+		return Arrays.stream(stackTrace.split("\n"))
 				.map(String::trim)
 				.map(stackLine -> LOCKED_RGX.matcher(stackLine.trim()))
 				.filter(Matcher::matches)
 				.map(match -> new Locked(match.group(LockedIndex.ID.get()), match.group(LockedIndex.CLASS.get())))
 				.collect(Collectors.toList());
-		return holds;
 	}
 	
 	private static void initializeStackTrace(final Map<StackTraceLock, Map<String, ThreadInfo>> stackTrace) {
@@ -203,7 +202,7 @@ public class ThreadParsing {
 		
 		final Matcher parkingToWaitForMatcher = PARKING_TO_WAIT_FOR.matcher(stackTraceLine);
 		if (parkingToWaitForMatcher.find()) {
-			final Map<String, ThreadInfo> waitingToLock = stackTrace.get(StackTraceLock.PARKING_TO_WAITT_FOR);
+			final Map<String, ThreadInfo> waitingToLock = stackTrace.get(StackTraceLock.PARKING_TO_WAIT_FOR);
 			final String lockedId = parkingToWaitForMatcher.group(WAITING_FOR_ID.get());
 			waitingToLock.put(lockedId, threadInfo);
 		}
@@ -223,7 +222,7 @@ public class ThreadParsing {
 
 	private static List<String> uniqueStackTrace(final List<String> threadStackTrace) {
 		final Set<String> m = new HashSet<>();
-		threadStackTrace.stream().filter(val -> !m.contains(val)).forEach(val -> m.add(val));
+		threadStackTrace.stream().filter(val -> !m.contains(val)).forEach(m::add);
 		return new ArrayList<>(m);
 	}
 

@@ -2,6 +2,9 @@ package com.thread.dump.parser.domain;
 
 import java.util.Objects;
 
+/**
+ * @author Leo Gutiérrez (leogutierrezramirez@gmail.com)
+ */
 public class Locked {
 
     private String lockID;

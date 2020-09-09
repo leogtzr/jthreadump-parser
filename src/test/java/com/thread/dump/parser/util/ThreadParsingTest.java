@@ -253,6 +253,7 @@ public class ThreadParsingTest {
 			,{"samples/tdump2.sample", 58}
 			,{"samples/tdump.jdk11.idea.txt", 56}
 			,{"samples/tdump.sample", 203}
+			,{"samples/x.txt", 0},
 		};
 
 		for (final Object[] test : tests) {
@@ -265,6 +266,56 @@ public class ThreadParsingTest {
 			assertEquals(expectedCount, gotThreadCount);
 		}
 
+	}
+
+	@Test
+	public void tryingToParseRandomFile() throws Exception {
+		final List<ThreadInfo> threads = ThreadDumpReader.fromFile("samples/x.txt");
+		final int expectedNumberOfThreadsInSampleFile = 0;
+
+		assertEquals(expectedNumberOfThreadsInSampleFile, threads.size());
+	}
+
+	@Test
+	public void checkThreadInfo() throws Exception {
+		final List<ThreadInfo> threads = ThreadDumpReader.fromFile("samples/9.0.4.0-test.txt");
+		final int expectedNumberOfThreadsInSampleFile = 5;
+
+		assertEquals(expectedNumberOfThreadsInSampleFile, threads.size());
+
+		final Object[][] tests = {
+			{
+				"Attach Listener", true, "0x00007f321c001000", "0x5ac6", "RUNNABLE"
+			},
+			{
+				"DestroyJavaVM", false, "0x00007f32b4012000", "0x5934", "RUNNABLE"
+			},
+			{
+				"scheduling-1", false, "0x00007f32b556c000", "0x596c", "TIMED_WAITING"
+			},
+			{
+				"http-nio-8080-Acceptor", true, "0x00007f32b53d7000", "0x596b", "RUNNABLE"
+			},
+			{
+				"http-nio-8080-ClientPoller", true, "0x00007f32b53f1000", "0x596a", "RUNNABLE"
+			}
+		};
+
+		for (int i = 0; i < expectedNumberOfThreadsInSampleFile; i++) {
+			final ThreadInfo thread = threads.get(i);
+
+			final String expectedThreadName = tests[i][0].toString();
+			final boolean expectedIsDaemon = (Boolean)tests[i][1];
+			final String expectedThreadID = tests[i][2].toString();
+			final String expectedNativeID = tests[i][3].toString();
+			final String expectedState = tests[i][4].toString();
+
+			assertEquals(expectedThreadName, thread.getName());
+			assertEquals(expectedIsDaemon, thread.isDaemon());
+			assertEquals(expectedThreadID, thread.getId());
+			assertEquals(expectedNativeID, thread.getNativeId());
+			assertEquals(expectedState, thread.getState());
+		}
 	}
 	
 }

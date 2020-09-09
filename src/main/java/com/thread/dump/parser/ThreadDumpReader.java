@@ -26,8 +26,10 @@ import static com.thread.dump.parser.util.ParsingConstants.NEW_LINE;
 public final class ThreadDumpReader {
 
 	private static List<ThreadInfo> parse(final List<String> tlines) {
+
 		final List<ThreadInfo> threads = new ArrayList<>();
 
+		beginParse:
 		for (int i = 0; i < tlines.size(); i++) {
 
 			String line = tlines.get(i);
@@ -43,7 +45,11 @@ public final class ThreadDumpReader {
 					}
 
 					i++;
-					line = tlines.get(i);
+					if (i < tlines.size()) {
+						line = tlines.get(i);
+					} else {
+						break;
+					}
 					final Optional<Thread.State> state = ThreadParsing.extractThreadState2(line);
 					if (state.isPresent()) {
 						thread.setState(state.get().toString());
@@ -66,13 +72,21 @@ public final class ThreadDumpReader {
 						i++;
 					}
 
-					line = tlines.get(i);
+					if (i < tlines.size()) {
+						line = tlines.get(i);
+					} else {
+						break;
+					}
 
 					final StringBuilder sb = new StringBuilder();
 					while (StringUtils.isNotBlank(line) && !line.startsWith(ParsingConstants.THREAD_INFORMATION_BEGIN)) {
 						sb.append(line.trim()).append(NEW_LINE);
 						i++;
-						line = tlines.get(i);
+						if (i < tlines.size()) {
+							line = tlines.get(i);
+						} else {
+							break;
+						}
 					}
 
 					if (StringUtils.isNotEmpty(sb.toString())) {

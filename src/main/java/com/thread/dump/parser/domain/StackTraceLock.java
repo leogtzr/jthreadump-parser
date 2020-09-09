@@ -5,7 +5,7 @@ package com.thread.dump.parser.domain;
  */
 public enum StackTraceLock {
 	LOCKED,
-	PARKING_TO_WAITT_FOR,
+	PARKING_TO_WAIT_FOR,
 	WAITING_ON,
 	WAITING_TO_LOCK
 }
