@@ -28,8 +28,7 @@ public final class ThreadDumpReader {
 	private static List<ThreadInfo> parse(final List<String> tlines) {
 
 		final List<ThreadInfo> threads = new ArrayList<>();
-
-		beginParse:
+		
 		for (int i = 0; i < tlines.size(); i++) {
 
 			String line = tlines.get(i);
