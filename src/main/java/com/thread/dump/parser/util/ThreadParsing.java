@@ -72,18 +72,6 @@ public class ThreadParsing {
 		
 		return Optional.empty();
 	}
-
-	public static Optional<Thread.State> extractThreadState2(final String line) {
-
-		final Matcher threadStateMatcher = STATE.matcher(line);
-
-		if (threadStateMatcher.find()) {
-			final String[] stateFields = threadStateMatcher.group(StateFieldsIndex.STATE.get()).split(" ");
-			return Optional.of(Thread.State.valueOf(stateFields[0]));
-		}
-
-		return Optional.empty();
-	}
 	
 	public static Optional<String> extractThreadStackTrace(final BufferedReader br) throws IOException {
 		final StringBuilder sb = new StringBuilder();

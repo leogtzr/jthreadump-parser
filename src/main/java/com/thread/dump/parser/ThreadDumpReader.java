@@ -49,7 +49,7 @@ public final class ThreadDumpReader {
 					} else {
 						break;
 					}
-					final Optional<Thread.State> state = ThreadParsing.extractThreadState2(line);
+					final Optional<Thread.State> state = ThreadParsing.extractThreadState(line);
 					if (state.isPresent()) {
 						thread.setState(state.get().toString());
 						line = tlines.get(i++);
