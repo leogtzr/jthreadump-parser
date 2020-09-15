@@ -317,5 +317,66 @@ public class ThreadParsingTest {
 			assertEquals(expectedState, thread.getState());
 		}
 	}
+
+	@Test
+	public void checkThreadInfo2() throws Exception {
+
+		final List<ThreadInfo> threads = ThreadDumpReader.fromFile("samples/14.0.1.1-together.txt");
+		final int expectedNumberOfThreadsInSampleFile = 9;
+
+		assertEquals(expectedNumberOfThreadsInSampleFile, threads.size());
+
+		final Object[][] tests = {
+			{
+					"Reference Handler", true, "0x00007f195c29c000", "0xb07f", "RUNNABLE", "at java.lang.ref.Reference.waitForReferencePendingList(java.base@14.0.1/Native Method)\r\n" +
+					"at java.lang.ref.Reference.processPendingReferences(java.base@14.0.1/Reference.java:241)\r\n" +
+					"at java.lang.ref.Reference$ReferenceHandler.run(java.base@14.0.1/Reference.java:213)\r\n"
+			},
+			{
+				"VM Thread", false, "0x00007f195c299000", "0xb07e", "runnable", ""
+			},
+			{
+				"GC Thread#7", false, "0x00007f191400a800", "0xb091", "runnable", ""
+			},
+			{
+				"G1 Main Marker", false, "0x00007f195c08c000", "0xb07a", "runnable", ""
+			},
+			{
+				"G1 Conc#0", false, "0x00007f195c08d800", "0xb07b", "runnable", ""
+			},
+			{
+				"G1 Conc#1", false, "0x00007f1924001000", "0xb097", "runnable", ""
+			},
+			{
+				"G1 Refine#0", false, "0x00007f195c20c000", "0xb07c", "runnable", ""
+			},
+			{
+				"G1 Young RemSet Sampling", false, "0x00007f195c20d800", "0xb07d", "runnable", ""
+			},
+			{
+				"VM Periodic Task Thread", false, "0x00007f195c30f000", "0xb087", "waiting on condition", ""
+			}
+		};
+
+		for (int i = 0; i < expectedNumberOfThreadsInSampleFile; i++) {
+			final ThreadInfo thread = threads.get(i);
+
+			final String expectedThreadName = tests[i][0].toString();
+			final boolean expectedIsDaemon = (Boolean)tests[i][1];
+			final String expectedThreadID = tests[i][2].toString();
+			final String expectedNativeID = tests[i][3].toString();
+			final String expectedState = tests[i][4].toString();
+			final String expectedStackTrace = tests[i][5].toString();
+
+			assertEquals(expectedThreadName, thread.getName());
+			assertEquals(expectedIsDaemon, thread.isDaemon());
+			assertEquals(expectedThreadID, thread.getId());
+			assertEquals(expectedNativeID, thread.getNativeId());
+			assertEquals(expectedState, thread.getState());
+			if (thread.getStackTrace().isPresent()) {
+				assertEquals(expectedStackTrace, thread.getStackTrace().get());
+			}
+		}
+	}
 	
 }

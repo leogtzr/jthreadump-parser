@@ -3,14 +3,10 @@
 package com.thread.dump.parser;
 
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.thread.dump.parser.domain.StackTraceLock;
 import com.thread.dump.parser.domain.ThreadInfo;
@@ -33,10 +29,11 @@ public final class ThreadDumpReader {
 
 			String line = tlines.get(i);
 			if (line.startsWith(ParsingConstants.THREAD_INFORMATION_BEGIN)) {
-
+				Optional<ThreadInfo> threadInfoTogether = Optional.empty();
 				final Optional<ThreadInfo> threadInfo = ThreadParsing.extractThreadInfoFromLine(line);
 
 				if (threadInfo.isPresent()) {
+					boolean threadTogether = false;
 					final ThreadInfo thread = threadInfo.get();
 
 					if (ThreadParsing.hasRunnableState(line)) {
@@ -49,6 +46,8 @@ public final class ThreadDumpReader {
 					} else {
 						break;
 					}
+
+					// Look for the thread state:
 					final Optional<Thread.State> state = ThreadParsing.extractThreadState(line);
 					if (state.isPresent()) {
 						thread.setState(state.get().toString());
@@ -57,16 +56,17 @@ public final class ThreadDumpReader {
 						i--;
 					}
 
+					// There could be two threads together without a thread state ...
 					if (line.startsWith(ParsingConstants.THREAD_INFORMATION_BEGIN)) {
 						final String line2 = line;
-						final Optional<ThreadInfo> threadInfo2 = ThreadParsing.extractThreadInfoFromLine(line);
-						threadInfo2.ifPresent(th -> {
+						threadInfoTogether = ThreadParsing.extractThreadInfoFromLine(line);
+						threadTogether = true;
+						threadInfoTogether.ifPresent(th -> {
 							if (ThreadParsing.hasRunnableState(line2)) {
 								th.setState("runnable");
 							} else if (ThreadParsing.hasWaitingOnConditionState(line2)) {
 								th.setState("waiting on condition");
 							}
-							threads.add(th);
 						});
 						i++;
 					}
@@ -92,7 +92,12 @@ public final class ThreadDumpReader {
 						thread.setStackTrace(sb.toString());
 					}
 
-					threads.add(thread);
+					if (threadTogether) {
+						threads.add(thread);
+						threadInfoTogether.ifPresent(th -> threads.add(th));
+					} else {
+						threads.add(thread);
+					}
 				}
 			}
 
