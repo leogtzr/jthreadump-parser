@@ -2,7 +2,7 @@
 
 This is a small Java library to parse some information from a Java Thread Dump.
 
-## Parse a thread dump file:
+## Parse a thread dump file (usage):
 
 ```java
 List<ThreadInfo> threads = ThreadDumpReader.fromFile("thread_dump.txt");
@@ -20,6 +20,12 @@ Or you could parse the thread information from a String:
 ```java
 List<ThreadInfo> threads = ThreadDumpReader.fromString(THREAD_DUMP_STRING);
 ```
+
+## Donation / Sponsorship ❤️ 👍
+
+This code was brought to you by [Leo Gutiérrez](https://github.com/leogtzr) in his free time. If you want to thank me and support the development of this project, please make a small donation on [PayPal](https://www.paypal.me/leogtzr). In case you also like my other open source contributions and articles, please consider motivating me by becoming a sponsor/patron on [Patreon](https://www.patreon.com/leogtzr). Thank you! ❤️
+
+
 
 ## Holds/Locks
 
